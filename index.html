@@ -67,40 +67,58 @@
 <body>
   <div class="container">
     <h2>Tính Nhiệt Độ<br> Bên Sườn Khuất Gió</h2>
+
     <label>🌤️ Nhiệt độ chân núi sườn đón gió (°C):</label>
     <input type="number" id="t_do_don_gio" step="any" />
+
     <label>⛰️ Chiều cao đỉnh núi (m):</label>
     <input type="number" id="h_dinh" step="any" />
+
     <label>📍 Độ cao cần tính bên sườn khuất gió (m):</label>
     <input type="number" id="h_can_tinh" step="any" />
+
     <button onclick="tinhNhietDo()">Tính Nhiệt Độ</button>
+
     <div class="result" id="ket_qua"></div>
     <div class="error" id="loi"></div>
   </div>
+
   <script>
     function tinhNhietDo() {
+      // Lấy giá trị người dùng nhập
       const t_do = parseFloat(document.getElementById('t_do_don_gio').value);
       const h_dinh = parseFloat(document.getElementById('h_dinh').value);
       const h_can_tinh = parseFloat(document.getElementById('h_can_tinh').value);
       const ket_qua = document.getElementById('ket_qua');
       const loi = document.getElementById('loi');
+
+      // Xóa thông báo cũ
       ket_qua.textContent = "";
       loi.textContent = "";
 
+      // Kiểm tra dữ liệu đầu vào
       if (isNaN(t_do) || isNaN(h_dinh) || isNaN(h_can_tinh)) {
         loi.textContent = "❌ Vui lòng nhập đầy đủ và hợp lệ tất cả các giá trị.";
         return;
       }
+
       if (h_can_tinh > h_dinh) {
         loi.textContent = "⚠️ Độ cao cần tính không thể cao hơn đỉnh núi!";
         return;
       }
 
-      const lapse = 1.0 / 100;  // Không khí khô: giảm/tăng 1°C mỗi 100m
+      // Các hằng số lapse rate
+      const lapse_am = 0.6 / 100;
+      const lapse_kho = 1.0 / 100;
 
-      const t_dinh = t_do - lapse * h_dinh;
+      // Tính nhiệt độ tại đỉnh núi
+      const t_dinh = t_do - lapse_am * h_dinh;
+
+      // Tính độ cao giảm
       const h_giam = h_dinh - h_can_tinh;
-      const t_can_tinh = t_dinh + lapse * h_giam;
+
+      // Tính nhiệt độ bên sườn khuất gió
+      const t_can_tinh = t_dinh + lapse_kho * h_giam;
 
       ket_qua.textContent = `🌡️ Nhiệt độ tại độ cao ${h_can_tinh.toFixed(0)} m bên sườn khuất gió: ${t_can_tinh.toFixed(2)} °C`;
     }
